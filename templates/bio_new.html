@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }} — BIO</title>
+    <link rel="stylesheet" href="/static/css/bio.css">
+    <link id="dynamic-favicon" rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <style>
+    :root {
+        --color-primary: {{ user.color }};
+    }
+    </style>
+</head>
+<body>
+    <div id="bio-tab">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><circle cx="12" cy="12" r="10" stroke="#b48cff" stroke-width="2" fill="#2a1a40"/><path d="M8 12l3 3 5-5" stroke="#b48cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.username }} — BIO</span>
+        <span id="bio-tab-close" style="margin-left:10px;cursor:pointer;font-size:1.2em;opacity:0.7;transition:opacity 0.2s;">✕</span>
+    </div>
+    <div class="bio-card">
+        {% if user.avatar %}
+            <img src="/{{ user.avatar }}" alt="avatar" class="avatar">
+        {% else %}
+            <div class="avatar-placeholder"></div>
+        {% endif %}
+        <h1 class="username">{{ user.username }}</h1>
+        {% if user.status %}
+            <div class="status">{{ user.status }}</div>
+        {% endif %}
+        {% if user.city %}
+            <div class="city">
+                <svg style="vertical-align:middle;margin-right:4px;" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C7.03 2 3 6.03 3 11c0 5.25 7.2 10.62 8.1 11.25.34.23.77.23 1.1 0C13.8 21.62 21 16.25 21 11c0-4.97-4.03-9-9-9zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z" fill="#b48cff"/>
+                </svg>
+                {{ user.city }}
+            </div>
+        {% endif %}
+        {% if user.bio %}
+            <div class="bio">{{ user.bio }}</div>
+        {% endif %}
+        <div style="margin-bottom:16px;opacity:0.7;">BIO пользователя</div>
+        <div class="social-links">
+            {% if user.social_vk %}
+                <a href="{{ user.social_vk }}" target="_blank" title="VK" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M27.6 9.2c.2-.7 0-1.2-1-1.2h-2.8c-.8 0-1.2.4-1.4.8 0 0-1.7 4.2-4.1 6.9-.8.8-1.1 1-1.5 1-.2 0-.5-.2-.5-.9V9.2c0-.8-.2-1.2-.9-1.2h-4.4c-.5 0-.8.4-.8.8 0 .7 1 .8 1.1 2.6v3.9c0 .9-.2 1-.5 1-.9 0-3.1-4.2-4.4-8.9-.2-.7-.5-.9-1.3-.9H3.2c-.8 0-1 .4-1 .8 0 .7.9 4.2 4.2 8.8C9.6 22.2 13.2 23 15.2 23c.9 0 1-.2 1-.8v-2.1c0-.7.1-.8.6-.8.3 0 .9.2 2.2 1.1 1.5 1.1 1.8 1.6 2.7 1.6h2.8c.8 0 1.2-.4 1-1.2-.3-.8-1.2-2-2.5-3.4-.7-.7-.6-1 .1-1.6 0 0 3.5-4.9 3.9-6.6z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_tg %}
+                <a href="{{ user.social_tg }}" target="_blank" title="Telegram" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M27.8 6.7 5.7 14.8c-1.1.4-1.1 1-.2 1.3l5.2 1.6 2 6.2c.3.8.7 1 1.3.8l2.7-2.2 5.6 4.1c1 .7 1.7.3 2-1.1l3.6-16.7c.3-1.3-.5-1.9-1.3-1.5zM24.2 10.2l-9.2 8.2c-.2.2-.4.3-.3.7l.5 2.2c.1.3.2.3.4.2l2.2-1.8 3.1 2.3c.2.2.4.1.5-.1l3.2-11.7c.1-.3-.1-.5-.4-.3z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_ds %}
+                <a href="{{ user.social_ds }}" target="_blank" title="Discord" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon discord" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.0371A19.7363 19.7363 0 0 0 3.677 4.3698a.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276c-.598.3428-1.2205.6447-1.8733.8923a.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6601a.061.061 0 0 0-.0312-.0286ZM8.02 15.3312c-1.1835 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189Zm7.9748 0c-1.1835 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_yt %}
+                <a href="{{ user.social_yt }}" target="_blank" title="YouTube" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M28.2 10.3c-.3-1.2-1.2-2.1-2.4-2.4C23.2 7.5 16 7.5 16 7.5s-7.2 0-9.8.4c-1.2.3-2.1 1.2-2.4 2.4C3.5 12.9 3.5 16 3.5 16s0 3.1.3 5.7c.3 1.2 1.2 2.1 2.4 2.4 2.6.4 9.8.4 9.8.4s7.2 0 9.8-.4c1.2-.3 2.1-1.2 2.4-2.4.3-2.6.3-5.7.3-5.7s0-3.1-.3-5.7zM13.7 20.2v-8.4l8.1 4.2-8.1 4.2z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_ig %}
+                <a href="{{ user.social_ig }}" target="_blank" title="Instagram" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <rect x="7" y="7" width="18" height="18" rx="5" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="22.5" cy="9.5" r="1.5" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_tw %}
+                <a href="{{ user.social_tw }}" target="_blank" title="Twitter" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M28 8.3c-.8.4-1.6.7-2.5.8a4.2 4.2 0 0 0 1.8-2.3c-.8.5-1.7.9-2.6 1.1A4.1 4.1 0 0 0 16 12.1c0 .3 0 .6.1.9-3.4-.2-6.4-1.8-8.4-4.3-.4.7-.6 1.5-.6 2.3 0 1.6.8 3 2.1 3.8-.7 0-1.3-.2-1.9-.5v.1c0 2.2 1.6 4 3.7 4.4-.4.1-.8.2-1.2.2-.3 0-.6 0-.8-.1.6 1.8 2.3 3.1 4.3 3.1A8.3 8.3 0 0 1 8 24.1c-.5 0-1 0-1.5-.1A11.7 11.7 0 0 0 14.3 26c7.5 0 11.6-6.2 11.6-11.6v-.5c.8-.6 1.5-1.3 2.1-2.1z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_gh %}
+                <a href="{{ user.social_gh }}" target="_blank" title="GitHub" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 3C8.3 3 2 9.3 2 17c0 6.2 4 11.4 9.5 13.2.7.1 1-.3 1-.7v-2.5c-3.9.8-4.7-1.7-4.7-1.7-.6-1.5-1.4-1.9-1.4-1.9-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.9 1.3 3.6 1 .1-.8.4-1.3.7-1.6-3.1-.4-6.4-1.6-6.4-7.1 0-1.6.6-2.9 1.5-3.9-.2-.4-.7-2 .1-4.1 0 0 1.2-.4 4 1.5a13.7 13.7 0 0 1 7.3 0c2.8-1.9 4-1.5 4-1.5.8 2.1.3 3.7.1 4.1.9 1 1.5 2.3 1.5 3.9 0 5.5-3.3 6.7-6.4 7.1.4.3.8 1 .8 2v3c0 .4.3.8 1 .7C26 28.4 30 23.2 30 17c0-7.7-6.3-14-14-14z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_st %}
+                <a href="{{ user.social_st }}" target="_blank" title="Steam" style="font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon steam" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <defs>
+                                <radialGradient id="steam-gradient" cx="70%" cy="30%" r="80%">
+                                    <stop offset="0%" stop-color="#60aee4"/>
+                                    <stop offset="100%" stop-color="#171A21"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="16" cy="16" r="16" fill="url(#steam-gradient)"/>
+                            <path d="M23.5 18.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-2.2 0a1.3 1.3 0 1 0-2.6 0 1.3 1.3 0 0 0 2.6 0z" fill="#fff"/>
+                            <circle cx="21.3" cy="18.5" r="1.3" fill="#171A21"/>
+                            <path d="M10.5 23l2.2-4.5 4.5 2.2-2.2 4.5z" fill="#fff"/>
+                            <path d="M19.5 13.5c.5-2.5 3.5-3.5 5.5-1.5 2 2 1 5-1.5 5.5" stroke="#fff" stroke-width="1.2" fill="none"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_tt %}
+                <a href="{{ user.social_tt }}" target="_blank" title="TikTok" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M22.7 7.3c-.2-1.2-1.2-2.1-2.4-2.1h-8.6c-1.2 0-2.2.9-2.4 2.1C8.1 8.7 8 10.3 8 12c0 6.6 5.4 12 12 12s12-5.4 12-12c0-1.7-.1-3.3-.3-4.7zM16 22c-5.5 0-10-4.5-10-10 0-1.5.1-2.9.3-4.2.2-.7.8-1.2 1.5-1.2h8.6c.7 0 1.3.5 1.5 1.2.2 1.3.3 2.7.3 4.2 0 5.5-4.5 10-10 10z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+            {% if user.social_fb %}
+                <a href="{{ user.social_fb }}" target="_blank" title="Facebook" style="color:{{ user.color }};font-size:2em;">
+                    <span class="icon-wrap">
+                        <svg class="social-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M19 6h-3c-3.3 0-6 2.7-6 6v3H6v4h4v9h4v-9h3l1-4h-4v-3c0-.6.4-1 1-1h3V6z" fill="currentColor"/>
+                        </svg>
+                    </span>
+                </a>
+            {% endif %}
+        </div>
+        {% if songs and songs|length > 0 %}
+            <div class="music-block">
+                <h3 class="music-title">Музыка</h3>
+                <div class="music-player">
+                    <img id="bio-cover" src="{{ songs[0][3] or '' }}" alt="cover" class="music-cover">
+                    <div id="bio-title" class="music-title-text">{{ songs[0][1] }}</div>
+                    <div class="music-controls">
+                        <button onclick="prevSong()" class="main-btn music-btn">⏮</button>
+                        <button onclick="togglePlay()" id="play-btn" class="main-btn music-btn">▶</button>
+                        <button onclick="nextSong()" class="main-btn music-btn">⏭</button>
+                    </div>
+                    <div id="bio-player-area" class="music-area"></div>
+                    <input type="range" id="bio-progress" value="0" min="0" max="100" step="1" class="music-progress">
+                </div>
+            </div>
+            <script>
+            const songs = [
+                {% for song in songs %}
+                {
+                    title: `{{ song[1]|e }}`,
+                    file: `{{ song[2]|e }}`,
+                    cover: `{{ song[3]|e }}`,
+                    link: `{{ song[4]|e }}`
+                },
+                {% endfor %}
+            ];
+            let current = 0;
+            let audio = null;
+            let playing = false;
+            function renderPlayer(idx) {
+                const s = songs[idx];
+                document.getElementById('bio-title').innerText = s.title;
+                document.getElementById('bio-cover').src = s.cover || '';
+                let area = document.getElementById('bio-player-area');
+                if (s.file) {
+                    area.innerHTML = `<audio id='bio-audio' src='${s.file}' style='width:100%' preload='auto'></audio>`;
+                    audio = document.getElementById('bio-audio');
+                    audio.onended = nextSong;
+                    audio.ontimeupdate = updateProgress;
+                    audio.onloadedmetadata = updateProgress;
+                    if (playing) audio.play();
+                } else if (s.link && (s.link.includes('youtube.com') || s.link.includes('youtu.be'))) {
+                    let yt = s.link.includes('v=') ? s.link.split('v=')[1].split('&')[0] : s.link.split('/').pop();
+                    area.innerHTML = `<iframe width='100%' height='80' style='border-radius:16px;border:none;box-shadow:0 2px 16px #0006;' src='https://www.youtube.com/embed/${yt}?autoplay=1' allow='autoplay; encrypted-media' allowfullscreen></iframe>`;
+                    audio = null;
+                } else {
+                    area.innerHTML = `<span style='color:#fff8;'>Нет файла или ссылки</span>`;
+                    audio = null;
+                }
+                document.getElementById('bio-progress').value = 0;
+            }
+            function prevSong() {
+                current = (current - 1 + songs.length) % songs.length;
+                playing = true;
+                renderPlayer(current);
+                updatePlayBtn();
+            }
+            function nextSong() {
+                current = (current + 1) % songs.length;
+                playing = true;
+                renderPlayer(current);
+                updatePlayBtn();
+            }
+            function togglePlay() {
+                if (!audio) { playing = true; renderPlayer(current); updatePlayBtn(); return; }
+                if (audio.paused) { audio.play(); playing = true; } else { audio.pause(); playing = false; }
+                updatePlayBtn();
+            }
+            function updatePlayBtn() {
+                document.getElementById('play-btn').innerText = playing ? '⏸' : '▶';
+            }
+            function updateProgress() {
+                if (!audio) return;
+                let p = audio.currentTime / audio.duration * 100;
+                document.getElementById('bio-progress').value = isNaN(p) ? 0 : p;
+            }
+            document.getElementById('bio-progress').addEventListener('input', function(e) {
+                if (audio && audio.duration) {
+                    audio.currentTime = audio.duration * (e.target.value / 100);
+                }
+            });
+            renderPlayer(current);
+            updatePlayBtn();
+            </script>
+        {% endif %}
+    </div>
+    <div id="nick-toast" style="position:fixed;top:32px;left:32px;z-index:1000;display:none;align-items:center;gap:10px;padding:12px 24px;background:rgba(40,20,60,0.95);border-radius:16px;box-shadow:0 4px 24px #a020f055;backdrop-filter:blur(8px);color:#b48cff;font-size:1.2em;font-weight:500;opacity:0;transition:opacity 0.7s, transform 0.7s;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M2 21v-2l16-16 3 3-16 16H2zm3-1.5l1.5 1.5 13-13-1.5-1.5-13 13z" fill="#b48cff"/></svg>
+        <span id="nick-toast-text">@{{ user.username }}</span>
+    </div>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const toast = document.getElementById('nick-toast');
+        toast.style.display = 'flex';
+        setTimeout(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+        }, 300);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-30px)';
+        }, 3300);
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 4000);
+    });
+    </script>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const tab = document.getElementById('bio-tab');
+        const close = document.getElementById('bio-tab-close');
+        setTimeout(() => {
+            tab.classList.add('show');
+            tab.classList.remove('hide');
+        }, 300);
+        close.onclick = () => {
+            tab.classList.remove('show');
+            tab.classList.add('hide');
+        };
+    });
+    </script>
+    <script>
+    // Бесконечная анимация заголовка вкладки (по буквам туда-обратно)
+    const fullTitle = '{{ user.username }} — BIO';
+    let titleStep = 0;
+    let titleDir = 1;
+    function animateTitleLoop() {
+        document.title = fullTitle.slice(0, titleStep);
+        if (titleDir === 1 && titleStep < fullTitle.length) {
+            titleStep++;
+            setTimeout(animateTitleLoop, 60);
+        } else if (titleDir === 1 && titleStep === fullTitle.length) {
+            setTimeout(() => { titleDir = -1; animateTitleLoop(); }, 1200);
+        } else if (titleDir === -1 && titleStep > 0) {
+            titleStep--;
+            setTimeout(animateTitleLoop, 40);
+        } else if (titleDir === -1 && titleStep === 0) {
+            setTimeout(() => { titleDir = 1; animateTitleLoop(); }, 600);
+        }
+    }
+    animateTitleLoop();
+    // Анимация favicon при проигрывании музыки (оставляю как было)
+    function setFavicon(sound) {
+        const favicon = document.getElementById('dynamic-favicon');
+        if (sound) {
+            favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g><circle cx="16" cy="16" r="16" fill="%23b48cff"/><path d="M10 22V10h4l6-4v20l-6-4h-4z" fill="%232a1a40"/></g></svg>';
+        } else {
+            favicon.href = '/static/favicon.svg';
+        }
+    }
+    setTimeout(() => {
+        const audio = document.getElementById('bio-audio');
+        if (audio) {
+            audio.addEventListener('play', () => setFavicon(true));
+            audio.addEventListener('pause', () => setFavicon(false));
+            audio.addEventListener('ended', () => setFavicon(false));
+        }
+    }, 1000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@{{ user.username }} | AcronBIO</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=array@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+    <style>
+      :root {
+        --accent: {{ user.color or '#d537f0' }};
+        --bg: #080808;
+        --container: rgba(27,27,27,0.5);
+        --container-blur: 20px;
+        --container-radius: 20px;
+        --container-shadow: 0 0 32px 0 var(--accent)33;
+        --text-glow: 0 0 16px var(--accent), 0 0 32px var(--accent)55;
+        --icon-glow: drop-shadow(0 0 7px #881c9c);
+      }
+      
+      body {
+        min-height: 100vh;
+        background: var(--bg);
+        color: #fff;
+        font-family: 'Satoshi', Arial, sans-serif;
+        overflow-x: hidden;
+      }
+      
+      .bio-bg {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 0;
+        background: url('{{ user.background_url or "https://r2.guns.lol/1b6cfcd9-97b7-4b41-8010-f8873c779333.gif" }}') center/cover no-repeat;
+        filter: blur(20px) brightness(0.7);
+        opacity: 0.85;
+      }
+      
+      .bio-main {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 60px 10px 30px 10px;
+      }
+      
+      .bio-avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 4px solid var(--accent);
+        box-shadow: var(--container-shadow);
+        margin-bottom: 1.5rem;
+        background: #181028;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .bio-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      
+      .bio-username {
+        font-size: 2.7rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-shadow: var(--text-glow);
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+        filter: url('https://assets.guns.lol/sparkle_black.gif');
+      }
+      
+      .bio-bio {
+        font-size: 1.2rem;
+        color: #fff;
+        opacity: 0.92;
+        margin-bottom: 0.7rem;
+        text-align: center;
+        max-width: 420px;
+      }
+      
+      .bio-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--accent);
+        font-size: 1.1rem;
+        margin-bottom: 2.2rem;
+        opacity: 0.85;
+        justify-content: center;
+      }
+      
+      .bio-socials {
+        display: flex;
+        gap: 1.2rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .bio-socials a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: rgba(27,27,27,0.7);
+        box-shadow: var(--container-shadow);
+        color: var(--accent);
+        font-size: 2rem;
+        transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+        text-decoration: none;
+        border: 2px solid transparent;
+        filter: var(--icon-glow);
+      }
+      
+      .bio-socials a:hover {
+        background: var(--accent)22;
+        color: #fff;
+        box-shadow: 0 0 32px 0 var(--accent);
+        border: 2px solid var(--accent);
+        transform: scale(1.08);
+      }
+      
+      .bio-container {
+        background: var(--container);
+        border-radius: var(--container-radius);
+        box-shadow: var(--container-shadow);
+        backdrop-filter: blur(var(--container-blur));
+        padding: 35px 15px;
+        width: 100%;
+        max-width: 40rem;
+        margin: 0 auto 2.5rem auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .player-block {
+        margin: 0;
+      }
+      
+      .player-container {
+        position: static;
+        left: unset;
+        bottom: unset;
+        transform: none;
+        width: 100%;
+        max-width: 40rem;
+        margin: 0 auto 2.5rem auto;
+        background: var(--container);
+        border-radius: 16px;
+        box-shadow: var(--container-shadow);
+        padding: 1.1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        backdrop-filter: blur(var(--container-blur));
+        z-index: 2;
+      }
+      
+      .player-cover {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+      
+      .player-info {
+        flex: 1;
+        min-width: 0;
+      }
+      
+      .player-title {
+        color: #fff;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+      }
+      
+      .player-button {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 1.8rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      
+      .player-button:hover {
+        color: #fff;
+        background: var(--accent)22;
+        transform: scale(1.1);
+      }
+      
+      .play-pause-button {
+        font-size: 2.2rem;
+        width: 50px;
+        height: 50px;
+      }
+      
+      .player-progress {
+        flex: 1;
+        height: 4px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 2px;
+        position: relative;
+        cursor: pointer;
+        margin: 0 1rem;
+      }
+      
+      .player-progress-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: var(--accent);
+        border-radius: 2px;
+        width: 0;
+        transition: width 0.1s linear;
+      }
+      
+      .player-time {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        min-width: 120px;
+        text-align: right;
+        font-family: monospace;
+      }
+      
+      .playlist-button {
+        font-size: 1.4rem;
+        margin-left: 0.5rem;
+      }
+      
+      .playlist-container {
+        position: static;
+        left: unset;
+        bottom: unset;
+        transform: none;
+        width: 100%;
+        max-width: 40rem;
+        margin: 0 auto 2.5rem auto;
+        background: var(--container);
+        border-radius: 16px;
+        box-shadow: var(--container-shadow);
+        padding: 1rem;
+        display: none;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 3;
+      }
+      
+      .playlist-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--accent)33;
+      }
+      
+      .playlist-title {
+        color: #fff;
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      
+      .playlist-close {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+      
+      .playlist-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .playlist-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      
+      .playlist-item:hover {
+        background: var(--accent)11;
+      }
+      
+      .playlist-item.active {
+        background: var(--accent)22;
+      }
+      
+      .playlist-item-cover {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        object-fit: cover;
+      }
+      
+      .playlist-item-title {
+        color: #fff;
+        font-size: 0.95rem;
+        margin: 0;
+      }
+      
+      @media (max-width: 600px) {
+        .bio-main { padding: 20px 2px 20px 2px; }
+        .bio-avatar { width: 90px; height: 90px; }
+        .bio-username { font-size: 1.5rem; }
+        .bio-bio { font-size: 1rem; max-width: 95vw; }
+        .bio-socials a { width: 40px; height: 40px; font-size: 1.3rem; }
+        .bio-container { padding: 15px 2px; }
+        .player-container, .playlist-container {
+          width: 98vw;
+          max-width: 98vw;
+          margin: 0 auto 1.2rem auto;
+        }
+      }
+    </style>
+</head>
+<body>
+  <div class="bio-bg"></div>
+  <div class="bio-main">
+    <div class="bio-container">
+      <div class="bio-avatar">
+        {% if user.avatar %}
+          <img src="/{{ user.avatar }}" alt="{{ user.username }}">
+        {% else %}
+          <img src="/static/avatars/default_haunter.png" alt="avatar">
+        {% endif %}
+      </div>
+      <div class="bio-username">{{ user.display_name or user.username }}</div>
+      {% if user.bio %}
+        <div class="bio-bio">{{ user.bio }}</div>
+      {% endif %}
+      {% if user.city %}
+        <div class="bio-location">
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="4 2 16 20"><path fill="currentColor" d="M12 12q.825 0 1.413-.587T14 10t-.587-1.412T12 8t-1.412.588T10 10t.588 1.413T12 12m0 10q-4.025-3.425-6.012-6.362T4 10.2q0-3.75 2.413-5.975T12 2t5.588 2.225T20 10.2q0 2.5-1.987 5.438T12 22"/></svg>
+          {{ user.city }}
+        </div>
+      {% endif %}
+      <div class="bio-socials">
+        {% if user.social_gh %}
+          <a href="{{ user.social_gh }}" target="_blank" title="GitHub"><svg width="1em" height="1em" viewBox="2.05 2 19.95 19.46"><path fill="currentColor" fill-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974c0 4.406 2.857 8.145 6.821 9.465c.499.09.679-.217.679-.481c0-.237-.008-.865-.011-1.696c-2.775.602-3.361-1.338-3.361-1.338c-.452-1.152-1.107-1.459-1.107-1.459c-.905-.619.069-.605.069-.605c1.002.07 1.527 1.028 1.527 1.028c.89 1.524 2.336 1.084 2.902.829c.091-.645.351-1.085.635-1.334c-2.214-.251-4.542-1.107-4.542-4.93c0-1.087.389-1.979 1.024-2.675c-.101-.253-.446-1.268.099-2.64c0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336a9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021c.545 1.372.203 2.387.099 2.64c.64.696 1.024 1.587 1.024 2.675c0 3.833-2.33 4.675-4.552 4.922c.355.308.675.916.675 1.846c0 1.334-.012 2.41-.012 2.737c0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974C22 6.465 17.535 2 12.026 2z" clip-rule="evenodd"></path></svg></a>
+        {% endif %}
+        {% if user.social_yt %}
+          <a href="{{ user.social_yt }}" target="_blank" title="YouTube"><svg width="1em" height="1em" viewBox="1.99 5 20.01 14.01"><path fill="currentColor" d="M21.593 7.203a2.506 2.506 0 0 0-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 0 0-1.766 1.778c-.413 1.566-.417 4.814-.417 4.814s-.004 3.264.406 4.814c.23.857.905 1.534 1.763 1.765c1.582.43 7.83.437 7.83.437s6.265.007 7.831-.403a2.515 2.515 0 0 0 1.767-1.763c.414-1.565.417-4.812.417-4.812s.02-3.265-.407-4.831zM9.996 15.005l.005-6l5.207 3.005l-5.212 2.995z"></path></svg></a>
+        {% endif %}
+        {% if user.social_st %}
+          <a href="{{ user.social_st }}" target="_blank" title="Steam"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="2 2 19.97 20"><path fill="currentColor" d="M8.21 17.32L7 16.8a2.13 2.13 0 1 0 1.17-2.93l1.28.53a1.58 1.58 0 0 1-1.22 2.92z"></path><path fill="currentColor" d="M12 2a10 10 0 0 0-10 9.34l5.38 2.21a2.31 2.31 0 0 1 .47-.24A2.62 2.62 0 0 1 9 13.1l2.44-3.56a3.8 3.8 0 1 1 3.8 3.8h-.08l-3.51 2.5a2.77 2.77 0 0 1-5.47.68l-3.77-1.6A10 10 0 1 0 12 2z"></path><path fill="currentColor" d="M17.79 9.5a2.53 2.53 0 1 0-2.53 2.5a2.54 2.54 0 0 0 2.53-2.5zm-4.42 0a1.9 1.9 0 1 1 1.9 1.91a1.9 1.9 0 0 1-1.9-1.92z"></path></svg></a>
+        {% endif %}
+        {% if user.social_ds %}
+          <a href="{{ user.social_ds }}" target="_blank" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="1.96 4.26 20.03 15.53"><path fill="currentColor" d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1a14.66 14.66 0 0 0-4.58 0a10.14 10.14 0 0 0-.53-1.1a16 16 0 0 0-4.13 1.3a17.33 17.33 0 0 0-3 11.59a16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83a3.39 3.39 0 0 0 .42-.33a11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.84a12.41 12.41 0 0 0 1.08 1.78a16.44 16.44 0 0 0 5.06-2.59a17.22 17.22 0 0 0-3-11.59a16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.93 1.93 0 0 1 1.8 2a1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2a1.93 1.93 0 0 1 1.8-2a1.92 1.92 0 0 1 1.8 2a1.92 1.92 0 0 1-1.8 2z"></path></svg></a>
+        {% endif %}
+        {% if user.social_tg %}
+          <a href="{{ user.social_tg }}" target="_blank" title="Telegram"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="2 3.61 20.02 16.79"><path fill="currentColor" d="m20.665 3.717l-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42l10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001l-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15l4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z"></path></svg></a>
+        {% endif %}
+        {% if user.social_roblox %}
+          <a href="{{ user.social_roblox }}" target="_blank" title="Roblox">
+            <svg width="1em" height="1em" viewBox="0 0 40 40" fill="none">
+              <defs>
+                <mask id="roblox-mask">
+                  <rect x="6" y="6" width="28" height="28" rx="4" fill="white" transform="rotate(15 20 20)"/>
+                  <rect x="17" y="17" width="6" height="6" rx="1" fill="black" transform="rotate(15 20 20)"/>
+                </mask>
+              </defs>
+              <rect x="6" y="6" width="28" height="28" rx="4" fill="currentColor" transform="rotate(15 20 20)" mask="url(#roblox-mask)"/>
+            </svg>
+          </a>
+        {% endif %}
+        {% if user.social_funpay %}
+          <a href="{{ user.social_funpay }}" target="_blank" title="FunPay"><svg width="1em" height="1em" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><text x="16" y="22" text-anchor="middle" font-size="15" font-family="Arial, sans-serif" fill="currentColor" font-weight="bold">F</text></svg></a>
+        {% endif %}
+      </div>
+    </div>
+    {% if songs %}
+    <div class="player-block">
+      <div class="player-container">
+        <img src="" alt="" class="player-cover">
+        <div class="player-info">
+          <div class="player-title"></div>
+          <div class="player-controls">
+            <button class="player-button prev-button" title="Предыдущая">⏮</button>
+            <button class="player-button play-pause-button" title="Воспроизвести/Пауза">▶</button>
+            <button class="player-button next-button" title="Следующая">⏭</button>
+            <div class="player-progress">
+              <div class="player-progress-bar"></div>
+            </div>
+            <div class="player-time">0:00 / 0:00</div>
+            <button class="player-button playlist-button" title="Плейлист">📋</button>
+          </div>
+        </div>
+      </div>
+      <div class="playlist-container">
+        <div class="playlist-header">
+          <div class="playlist-title">Плейлист</div>
+          <button class="playlist-close">✕</button>
+        </div>
+        <div class="playlist-items"></div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Формируем массив песен из Jinja
+      const songs = {{ songs|tojson|safe }};
+      let currentSongIndex = 0;
+      const player = new Audio();
+      const playerContainer = document.querySelector('.player-container');
+      const playerCover = document.querySelector('.player-cover');
+      const playerTitle = document.querySelector('.player-title');
+      const playPauseButton = document.querySelector('.play-pause-button');
+      const prevButton = document.querySelector('.prev-button');
+      const nextButton = document.querySelector('.next-button');
+      const progressBar = document.querySelector('.player-progress-bar');
+      const progressContainer = document.querySelector('.player-progress');
+      const timeDisplay = document.querySelector('.player-time');
+      const playlistButton = document.querySelector('.playlist-button');
+      const playlistContainer = document.querySelector('.playlist-container');
+      const playlistClose = document.querySelector('.playlist-close');
+      const playlistItems = document.querySelector('.playlist-items');
+      let isDragging = false;
+      // Инициализация
+      function loadSong(index) {
+        if (!songs[index]) return;
+        player.src = songs[index].file_url;
+        playerTitle.textContent = songs[index].title;
+        playerCover.src = songs[index].cover_url || '';
+        updatePlaylistActive();
+      }
+      function playSong(index) {
+        currentSongIndex = index;
+        loadSong(index);
+        player.play();
+        playPauseButton.textContent = '⏸';
+      }
+      function updatePlaylistActive() {
+        document.querySelectorAll('.playlist-item').forEach((item, idx) => {
+          item.classList.toggle('active', idx === currentSongIndex);
+        });
+      }
+      function createPlaylist() {
+        playlistItems.innerHTML = '';
+        songs.forEach((song, index) => {
+          const item = document.createElement('div');
+          item.className = 'playlist-item';
+          if (index === currentSongIndex) item.classList.add('active');
+          const cover = document.createElement('img');
+          cover.className = 'playlist-item-cover';
+          cover.src = song.cover_url || '';
+          cover.alt = song.title;
+          const title = document.createElement('div');
+          title.className = 'playlist-item-title';
+          title.textContent = song.title;
+          item.appendChild(cover);
+          item.appendChild(title);
+          item.addEventListener('click', () => playSong(index));
+          playlistItems.appendChild(item);
+        });
+      }
+      playPauseButton.addEventListener('click', () => {
+        if (player.paused) { player.play(); playPauseButton.textContent = '⏸'; }
+        else { player.pause(); playPauseButton.textContent = '▶'; }
+      });
+      prevButton.addEventListener('click', () => playSong((currentSongIndex - 1 + songs.length) % songs.length));
+      nextButton.addEventListener('click', () => playSong((currentSongIndex + 1) % songs.length));
+      player.addEventListener('timeupdate', () => {
+        if (!isDragging) {
+          const progress = (player.currentTime / player.duration) * 100;
+          progressBar.style.width = `${progress}%`;
+        }
+        const currentMinutes = Math.floor(player.currentTime / 60);
+        const currentSeconds = Math.floor(player.currentTime % 60);
+        const durationMinutes = Math.floor(player.duration / 60);
+        const durationSeconds = Math.floor(player.duration % 60);
+        timeDisplay.textContent = `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')} / ${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`;
+      });
+      progressContainer.addEventListener('mousedown', (e) => { isDragging = true; updateProgress(e); });
+      document.addEventListener('mousemove', (e) => { if (isDragging) updateProgress(e); });
+      document.addEventListener('mouseup', () => { if (isDragging) isDragging = false; });
+      function updateProgress(e) {
+        const rect = progressContainer.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        const newTime = pos * player.duration;
+        player.currentTime = newTime;
+        progressBar.style.width = `${pos * 100}%`;
+      }
+      player.addEventListener('ended', () => playSong((currentSongIndex + 1) % songs.length));
+      playlistButton.addEventListener('click', () => {
+        playlistContainer.style.display = playlistContainer.style.display === 'flex' ? 'none' : 'flex';
+        if (playlistContainer.style.display === 'flex') createPlaylist();
+      });
+      playlistClose.addEventListener('click', () => { playlistContainer.style.display = 'none'; });
+      playerCover.addEventListener('click', () => {
+        playlistContainer.style.display = playlistContainer.style.display === 'flex' ? 'none' : 'flex';
+        if (playlistContainer.style.display === 'flex') createPlaylist();
+      });
+      playerTitle.addEventListener('click', () => {
+        playlistContainer.style.display = playlistContainer.style.display === 'flex' ? 'none' : 'flex';
+        if (playlistContainer.style.display === 'flex') createPlaylist();
+      });
+      // Инициализация
+      if (songs.length > 0) {
+        loadSong(0);
+      }
+    });
+  </script>
+  {% if user.background_effects %}
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const effect = '{{ user.background_effects }}';
+      
+      if (effect === 'rain') {
+        createRain();
+      } else if (effect === 'snow') {
+        createSnow();
+      } else if (effect === 'confetti') {
+        createConfetti();
+      } else if (effect === 'stars') {
+        createStars();
+      } else if (effect === 'bubbles') {
+        createBubbles();
+      } else if (effect === 'hearts') {
+        createHearts();
+      } else if (effect === 'autumn') {
+        createAutumn();
+      } else if (effect === 'fireworks') {
+        createFireworks();
+      } else if (effect === 'sakura') {
+        createSakura();
+      } else if (effect === 'fireflies') {
+        createFireflies();
+      } else if (effect === 'matrix') {
+        createMatrix();
+      }
+      
+      function createRain() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        
+        for (let i = 0; i < 100; i++) {
+          const drop = document.createElement('div');
+          drop.style.position = 'absolute';
+          drop.style.width = '2px';
+          drop.style.height = '20px';
+          drop.style.background = 'rgba(255, 255, 255, 0.3)';
+          drop.style.left = Math.random() * 100 + '%';
+          drop.style.top = Math.random() * 100 + '%';
+          drop.style.animation = `rain ${Math.random() * 1 + 0.5}s linear infinite`;
+          container.appendChild(drop);
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes rain {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      function createSnow() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        
+        for (let i = 0; i < 50; i++) {
+          const snowflake = document.createElement('div');
+          snowflake.style.position = 'absolute';
+          snowflake.style.width = '8px';
+          snowflake.style.height = '8px';
+          snowflake.style.background = 'white';
+          snowflake.style.borderRadius = '50%';
+          snowflake.style.opacity = '0.8';
+          snowflake.style.left = Math.random() * 100 + '%';
+          snowflake.style.top = Math.random() * 100 + '%';
+          snowflake.style.animation = `snow ${Math.random() * 3 + 2}s linear infinite`;
+          container.appendChild(snowflake);
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes snow {
+            0% { transform: translateY(-100vh) translateX(0); }
+            100% { transform: translateY(100vh) translateX(100px); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      function createConfetti() {
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1 };
+        
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+        
+        const interval = setInterval(function() {
+          const timeLeft = animationEnd - Date.now();
+          
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+          
+          const particleCount = 50 * (timeLeft / duration);
+          
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+          });
+          confetti({
+            ...defaults,
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+          });
+        }, 250);
+      }
+      
+      function createStars() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        for (let i = 0; i < 80; i++) {
+          const star = document.createElement('div');
+          star.style.position = 'absolute';
+          star.style.width = star.style.height = Math.random() > 0.7 ? '3px' : '2px';
+          star.style.background = 'white';
+          star.style.borderRadius = '50%';
+          star.style.opacity = Math.random() * 0.7 + 0.3;
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.boxShadow = `0 0 ${Math.random()*8+2}px #fff`;
+          star.style.animation = `star-twinkle ${Math.random()*2+1}s infinite alternate`;
+          container.appendChild(star);
+        }
+        const style = document.createElement('style');
+        style.textContent = `@keyframes star-twinkle { 0%{opacity:0.3;} 100%{opacity:1;} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createBubbles() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        for (let i = 0; i < 40; i++) {
+          const bubble = document.createElement('div');
+          const size = Math.random()*18+12;
+          bubble.style.position = 'absolute';
+          bubble.style.width = bubble.style.height = size+'px';
+          bubble.style.left = Math.random()*100+'vw';
+          bubble.style.bottom = '-'+size+'px';
+          bubble.style.background = 'rgba(173,216,230,0.25)';
+          bubble.style.borderRadius = '50%';
+          bubble.style.border = '1.5px solid #b3e0ff';
+          bubble.style.animation = `bubble-up ${Math.random()*3+3}s linear infinite`;
+          container.appendChild(bubble);
+        }
+        const style = document.createElement('style');
+        style.textContent = `@keyframes bubble-up { 0%{transform:translateY(0);} 100%{transform:translateY(-110vh);} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createHearts() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#ff4c7d';
+        for (let i = 0; i < 30; i++) {
+          const heart = document.createElement('div');
+          heart.innerHTML = `<svg width='22' height='20' viewBox='0 0 22 20'><path d='M11 18s-7-4.35-7-10A5 5 0 0 1 11 3a5 5 0 0 1 7 5c0 5.65-7 10-7 10z' fill='${accent.trim()}' stroke='#fff' stroke-width='1.2'/></svg>`;
+          heart.style.position = 'absolute';
+          heart.style.left = Math.random()*100+'vw';
+          heart.style.top = Math.random()*100+'vh';
+          heart.style.opacity = Math.random()*0.7+0.3;
+          heart.style.transform = `scale(${Math.random()*0.7+0.6})`;
+          heart.style.animation = `heart-float ${Math.random()*3+3}s ease-in-out infinite`;
+          container.appendChild(heart);
+        }
+        const style = document.createElement('style');
+        style.textContent = `@keyframes heart-float { 0%{transform:translateY(0) scale(1);} 100%{transform:translateY(-60px) scale(1.1);} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createAutumn() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        const leafColors = ['#e67e22','#f1c40f','#d35400','#27ae60','#c0392b'];
+        function spawnLeaf() {
+          const leaf = document.createElement('div');
+          leaf.innerHTML = `<svg width='28' height='28' viewBox='0 0 28 28'><ellipse cx='14' cy='14' rx='10' ry='5' fill='${leafColors[Math.floor(Math.random()*leafColors.length)]}'/></svg>`;
+          leaf.style.position = 'absolute';
+          leaf.style.left = Math.random()*100+'vw';
+          leaf.style.top = '-40px';
+          leaf.style.opacity = Math.random()*0.7+0.3;
+          leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+          const duration = Math.random()*3+4;
+          leaf.style.animation = `leaf-fall ${duration}s linear forwards`;
+          container.appendChild(leaf);
+          setTimeout(()=>{leaf.remove();}, duration*1000);
+        }
+        setInterval(spawnLeaf, 300);
+        // Первый запуск — несколько листьев сразу
+        for(let i=0;i<8;i++) setTimeout(spawnLeaf, i*200);
+        const style = document.createElement('style');
+        style.textContent = `@keyframes leaf-fall { 0%{transform:translateY(0);} 100%{transform:translateY(110vh) rotate(360deg);} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createFireworks() {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+        script.onload = () => {
+          setInterval(() => {
+            confetti({
+              particleCount: 80,
+              spread: 120,
+              origin: { x: Math.random(), y: Math.random()*0.5 },
+              zIndex: 2
+            });
+          }, 1200);
+        };
+        document.body.appendChild(script);
+      }
+      
+      function createSakura() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        function spawnPetal() {
+          const petal = document.createElement('div');
+          petal.innerHTML = `<svg width='22' height='22' viewBox='0 0 22 22'><ellipse cx='11' cy='16' rx='7' ry='4' fill='#ffb7d5'/></svg>`;
+          petal.style.position = 'absolute';
+          petal.style.left = Math.random()*100+'vw';
+          petal.style.top = '-40px';
+          petal.style.opacity = Math.random()*0.7+0.3;
+          petal.style.transform = `rotate(${Math.random()*360}deg)`;
+          const duration = Math.random()*3+4;
+          petal.style.animation = `sakura-fall ${duration}s linear forwards`;
+          container.appendChild(petal);
+          setTimeout(()=>{petal.remove();}, duration*1000);
+        }
+        setInterval(spawnPetal, 350);
+        for(let i=0;i<6;i++) setTimeout(spawnPetal, i*200);
+        const style = document.createElement('style');
+        style.textContent = `@keyframes sakura-fall { 0%{transform:translateY(0);} 100%{transform:translateY(110vh) rotate(360deg);} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createFireflies() {
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '1';
+        document.body.appendChild(container);
+        for (let i = 0; i < 25; i++) {
+          const firefly = document.createElement('div');
+          firefly.style.position = 'absolute';
+          firefly.style.width = firefly.style.height = Math.random()*6+6+'px';
+          firefly.style.left = Math.random()*100+'vw';
+          firefly.style.top = Math.random()*100+'vh';
+          firefly.style.background = 'radial-gradient(circle, #fffbe6 60%, #ffe066 100%, transparent 100%)';
+          firefly.style.borderRadius = '50%';
+          firefly.style.opacity = Math.random()*0.5+0.5;
+          firefly.style.animation = `firefly-move ${Math.random()*6+4}s linear infinite alternate`;
+          container.appendChild(firefly);
+        }
+        const style = document.createElement('style');
+        style.textContent = `@keyframes firefly-move { 0%{transform:translate(0,0);} 100%{transform:translate(${Math.random()*100-50}px,${Math.random()*100-50}px);} }`;
+        document.head.appendChild(style);
+      }
+      
+      function createMatrix() {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '1';
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        const letters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 18;
+        const columns = Math.floor(width / fontSize);
+        const drops = Array(columns).fill(1);
+        function draw() {
+          ctx.fillStyle = 'rgba(0,0,0,0.15)';
+          ctx.fillRect(0,0,width,height);
+          ctx.fillStyle = '#39ff14';
+          ctx.font = fontSize+'px monospace';
+          for(let i=0;i<drops.length;i++){
+            const text = letters[Math.floor(Math.random()*letters.length)];
+            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+            if(drops[i]*fontSize > height && Math.random() > 0.975) drops[i]=0;
+            drops[i]++;
+          }
+        }
+        setInterval(draw, 50);
+        window.addEventListener('resize',()=>{
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        });
+      }
+    });
+  </script>
+  {% endif %}
+</body>
+</html> 

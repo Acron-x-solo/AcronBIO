@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация | AcronBIO</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=array@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <header>
+        <div class="logo">
+            <h1>Acron<span>BIO</span></h1>
+        </div>
+        <nav>
+            <a href="{{ url_for('login') }}">Войти</a>
+            <a href="{{ url_for('register') }}">Регистрация</a>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <h1>Создать аккаунт</h1>
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="form-group">
+                    <label class="form-label" for="username">Имя пользователя</label>
+                    <input type="text" id="username" name="username" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Пароль</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Подтвердите пароль</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+                </div>
+                <button type="submit" class="form-button">Зарегистрироваться</button>
+            </form>
+            <div class="auth-links">
+                <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</body>
+</html> 

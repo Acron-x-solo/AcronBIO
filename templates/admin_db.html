@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>База пользователей</title>
+    <link rel="stylesheet" href="/static/css/bio.css">
+    <style>
+        table { width: 98%; margin: 20px auto; border-collapse: collapse; background: #22143a; color: #fff; }
+        th, td { border: 1px solid #a020f0; padding: 6px 10px; font-size: 0.95em; }
+        th { background: #a020f0; color: #fff; }
+        tr:nth-child(even) { background: #2a1850; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+    <h2>База пользователей</h2>
+    <table>
+        <tr>
+            {% for col in columns %}
+                <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+        {% for user in users %}
+        <tr>
+            {% for value in user %}
+                <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/">На главную</a>
+    <a href="/admin/export-txt" class="main-btn" style="margin-bottom:16px;">Скачать TXT</a>
+    </div>
+</body>
+</html> 

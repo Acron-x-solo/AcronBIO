@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=array@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+      .profile-edit-container {
+        max-width: 1100px;
+        margin: 60px auto 40px auto;
+        background: rgba(27, 27, 27, 0.6);
+        border-radius: 22px;
+        box-shadow: 0 8px 32px 0 rgba(124,58,237,0.10);
+        padding: 2.5rem 3.5rem 2.5rem 3.5rem;
+        backdrop-filter: blur(18px);
+      }
+      .profile-edit-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        color: var(--primary-color);
+      }
+      .profile-edit-form label {
+        display: block;
+        margin-bottom: 1.1rem;
+        color: #fff;
+        font-size: 1.05rem;
+      }
+      .profile-edit-form input[type="text"],
+      .profile-edit-form input[type="color"],
+      .profile-edit-form input[type="file"],
+      .profile-edit-form textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        margin-top: 0.3rem;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(124,58,237,0.13);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
+        transition: border 0.2s;
+      }
+      .profile-edit-form input[type="color"] {
+        padding: 0.2rem;
+        height: 2.2rem;
+        width: 3.5rem;
+      }
+      .profile-edit-form input[type="text"]:focus,
+      .profile-edit-form textarea:focus {
+        border: 1.5px solid var(--primary-color);
+        outline: none;
+      }
+      .profile-edit-form button {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .profile-edit-form button:hover {
+        background: #5a1bb7;
+        transform: translateY(-2px) scale(1.03);
+      }
+      .profile-socials {
+        margin: 2.2rem 0 1.2rem 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.2rem;
+        justify-content: center;
+      }
+      .profile-socials input {
+        width: 220px;
+        margin-bottom: 0;
+      }
+      .profile-songs {
+        margin-top: 2.5rem;
+        background: rgba(255,255,255,0.04);
+        border-radius: 14px;
+        padding: 1.2rem 1rem;
+      }
+      .profile-songs h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+      .profile-songs ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .profile-songs li {
+        margin-bottom: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .profile-songs img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #a020f055;
+      }
+      .profile-songs a {
+        color: var(--primary-color);
+        font-size: 0.98em;
+        text-decoration: underline;
+      }
+      .profile-songs a:hover {
+        color: #b48cff;
+      }
+      @media (max-width: 600px) {
+        .profile-edit-container { padding: 1.2rem 0.5rem; }
+        .profile-socials { flex-direction: column; gap: 0.7rem; }
+        .profile-socials input { width: 100%; }
+      }
+      .profile-columns {
+        display: flex;
+        gap: 2.5rem;
+        justify-content: center;
+        align-items: flex-start;
+        margin-top: 1.5rem;
+      }
+      .profile-col {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 420px;
+      }
+      .profile-col-left {
+        min-width: 260px;
+      }
+      .profile-col-right {
+        min-width: 320px;
+      }
+      @media (max-width: 900px) {
+        .profile-columns {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        .profile-col {
+          max-width: 100%;
+        }
+        .profile-edit-container {
+          padding: 1.2rem 0.5rem;
+          max-width: 98vw;
+        }
+      }
+    </style>
+</head>
+<body>
+  <div class="profile-edit-container">
+    <h2>Профиль</h2>
+    <div class="profile-columns">
+      <div class="profile-col profile-col-left">
+        <form class="profile-edit-form" method="post" enctype="multipart/form-data">
+          <label>Никнейм:
+            <input type="text" name="username" value="{{ user.username }}" required>
+          </label>
+          <label>Цветовая тема:
+            <input type="color" name="color" value="{{ user.color or '#a020f0' }}">
+          </label>
+          <label>Эффект на фоне:
+            <select name="background_effects">
+              <option value="none" {% if user.background_effects == 'none' or not user.background_effects %}selected{% endif %}>Нет</option>
+              <option value="rain" {% if user.background_effects == 'rain' %}selected{% endif %}>Дождь</option>
+              <option value="snow" {% if user.background_effects == 'snow' %}selected{% endif %}>Снег</option>
+              <option value="confetti" {% if user.background_effects == 'confetti' %}selected{% endif %}>Конфетти</option>
+              <option value="stars" {% if user.background_effects == 'stars' %}selected{% endif %}>Звёзды</option>
+              <option value="bubbles" {% if user.background_effects == 'bubbles' %}selected{% endif %}>Пузырьки</option>
+              <option value="hearts" {% if user.background_effects == 'hearts' %}selected{% endif %}>Сердечки</option>
+              <option value="autumn" {% if user.background_effects == 'autumn' %}selected{% endif %}>Листья</option>
+              <option value="fireworks" {% if user.background_effects == 'fireworks' %}selected{% endif %}>Фейерверк</option>
+              <option value="sakura" {% if user.background_effects == 'sakura' %}selected{% endif %}>Сакура</option>
+              <option value="fireflies" {% if user.background_effects == 'fireflies' %}selected{% endif %}>Светлячки</option>
+              <option value="matrix" {% if user.background_effects == 'matrix' %}selected{% endif %}>Matrix</option>
+            </select>
+          </label>
+          <label>Аватар:
+            <input type="file" name="avatar">
+          </label>
+          <label>Город:
+            <input type="text" name="city" value="{{ user.city or '' }}">
+          </label>
+          <label>О себе:
+            <textarea name="bio" rows="3">{{ user.bio or '' }}</textarea>
+          </label>
+          <div class="profile-socials">
+            <input type="text" name="social_tg" value="{{ user.social_tg or '' }}" placeholder="Telegram">
+            <input type="text" name="social_ds" value="{{ user.social_ds or '' }}" placeholder="Discord">
+            <input type="text" name="social_yt" value="{{ user.social_yt or '' }}" placeholder="YouTube">
+            <input type="text" name="social_gh" value="{{ user.social_gh or '' }}" placeholder="GitHub">
+            <input type="text" name="social_st" value="{{ user.social_st or '' }}" placeholder="Steam">
+            <input type="text" name="social_roblox" value="{{ user.social_roblox or '' }}" placeholder="Roblox">
+            <input type="text" name="social_funpay" value="{{ user.social_funpay or '' }}" placeholder="FunPay">
+          </div>
+          <button type="submit">Сохранить</button>
+        </form>
+      </div>
+      <div class="profile-col profile-col-right">
+        <form class="add-song-form" method="post" enctype="multipart/form-data" style="margin-bottom:2.2rem;background:rgba(255,255,255,0.04);border-radius:14px;padding:1.2rem 1rem;">
+          <input type="hidden" name="add_song" value="1">
+          <h3 style="margin-bottom:1.2rem;color:var(--primary-color);text-align:center;">Добавить песню</h3>
+          <label style="color:#fff;">Название:
+            <input type="text" name="song_title" required style="width:100%;margin-bottom:0.7rem;">
+          </label>
+          <label style="color:#fff;">MP3-файл:
+            <input type="file" name="song_file" accept=".mp3" required style="width:100%;margin-bottom:0.7rem;">
+          </label>
+          <label style="color:#fff;">Обложка (иконка, необязательно):
+            <input type="file" name="song_cover" accept=".jpg,.jpeg,.png,.gif" style="width:100%;margin-bottom:0.7rem;">
+          </label>
+          <label style="color:#fff;">Ссылка (необязательно):
+            <input type="text" name="song_link" style="width:100%;margin-bottom:0.7rem;">
+          </label>
+          <button type="submit" style="background:var(--primary-color);color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:10px;font-size:1.05rem;cursor:pointer;width:100%;margin-top:1.2rem;">Добавить</button>
+        </form>
+        {% if songs %}
+        <div class="profile-songs">
+          <h3>Ваши песни</h3>
+          <ul>
+            {% for song in songs %}
+            <li>
+              {% if song[3] %}
+                <img src="{{ song[3] }}" alt="cover">
+              {% endif %}
+              <div>
+                <b>{{ song[1] }}</b><br>
+                {% if song[2] %}<span style="font-size:0.95em;opacity:0.7;">[mp3]</span>{% endif %}
+                {% if song[4] %}<a href="{{ song[4] }}" target="_blank">[ссылка]</a>{% endif %}
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <a href="/" style="display:block;text-align:center;margin-top:2.2rem;color:var(--primary-color);text-decoration:underline;">На главную</a>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="margin-top:1.5rem;text-align:center;color:#ff4c7d;list-style:none;">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+  <script>
+    // Автосохранение профиля при уходе со страницы
+    (function() {
+      const form = document.querySelector('.profile-edit-form');
+      if (!form) return;
+      let lastData = new FormData(form);
+      let changed = false;
+      // Отслеживаем изменения
+      form.querySelectorAll('input, textarea, select').forEach(el => {
+        el.addEventListener('input', () => { changed = true; });
+        el.addEventListener('change', () => { changed = true; });
+      });
+      function getFormData() {
+        const data = {};
+        form.querySelectorAll('input, textarea, select').forEach(el => {
+          if (el.type === 'file') return; // не отправляем файлы
+          if (el.type === 'checkbox') data[el.name] = el.checked;
+          else data[el.name] = el.value;
+        });
+        return data;
+      }
+      window.addEventListener('beforeunload', function(e) {
+        if (!changed) return;
+        changed = false;
+        const data = getFormData();
+        navigator.sendBeacon && navigator.sendBeacon('/profile', new URLSearchParams(data));
+        // Для старых браузеров — синхронный fetch
+        if (!navigator.sendBeacon) {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/profile', false);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.send(new URLSearchParams(data).toString());
+        }
+      });
+    })();
+  </script>
+</body>
+</html> 

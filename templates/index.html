@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AcronBIO | Главная</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@1&f[]=array@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <header>
+        <div class="logo">
+            <h1>Acron<span>BIO</span></h1>
+        </div>
+        <nav>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}">Войти</a>
+            <a href="{{ url_for('register') }}">Регистрация</a>
+        {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% if current_user.is_authenticated %}
+        <div class="user-actions">
+            <a href="{{ url_for('profile') }}" class="user-action-btn">Редактировать профиль</a>
+            <a href="{{ url_for('bio', username=current_user.username) }}" class="user-action-btn">Моя био-страница</a>
+        </div>
+        {% endif %}
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Всё, что вам нужно, прямо здесь.</h1>
+                <p>AcronBIO - это современная платформа для создания стильных био-страниц и безопасного хранения файлов.</p>
+                <div class="claim-box">
+                    <div class="url-input">
+                        <span>acronbio/</span>
+                        <input type="text" placeholder="username" id="username">
+                    </div>
+                    <a href="{{ url_for('register') }}" class="claim-btn">Зарегистрироваться</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="features-bg"></div>
+            <h2>Более 680,000 человек используют AcronBIO — Что вы ждёте?</h2>
+            <h3>Создавайте стильные, настраиваемые и современные био-страницы вместе с AcronBIO</h3>
+            <div class="stats wide">
+                <div class="stat-item">
+                    <h1>24,300,000+</h1>
+                    <span>Просмотров профилей</span>
+                </div>
+                <div class="stat-item">
+                    <h1>680,000+</h1>
+                    <span>Пользователей</span>
+                </div>
+                <div class="stat-item">
+                    <h1>380,000+</h1>
+                    <span>Загрузок файлов</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-bio">
+            <div class="why-bio-bg"></div>
+            <h2>Почему выбирают AcronBIO?</h2>
+            <div class="why-bio-features">
+                <div class="why-bio-feature">
+                    <div class="why-bio-icon">🔒</div>
+                    <h3>Безопасность</h3>
+                    <p>Ваши данные и файлы защищены современными технологиями шифрования.</p>
+                </div>
+                <div class="why-bio-feature">
+                    <div class="why-bio-icon">🎨</div>
+                    <h3>Гибкая настройка</h3>
+                    <p>Настраивайте внешний вид страницы под себя: цвета, фон, ссылки и многое другое.</p>
+                </div>
+                <div class="why-bio-feature">
+                    <div class="why-bio-icon">⚡</div>
+                    <h3>Мгновенная загрузка</h3>
+                    <p>Сайт работает быстро и стабильно даже при большом количестве посетителей.</p>
+                </div>
+                <div class="why-bio-feature">
+                    <div class="why-bio-icon">📱</div>
+                    <h3>Мобильная версия</h3>
+                    <p>Ваша страница AcronBIO отлично выглядит на любом устройстве: телефоне, планшете, ПК.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta-inner">
+                <h2>Готовы создать свою идеальную био-страницу?</h2>
+                <a href="{{ url_for('register') }}" class="cta-btn">Начать бесплатно</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content container">
+            <div class="footer-col">
+                <h1 class="footer-logo">Acron<span>BIO</span></h1>
+                <p class="footer-desc">Создавайте стильные био-страницы с AcronBIO</p>
+            </div>
+            <div class="footer-col">
+                <h3>Общее</h3>
+                {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('login') }}">Войти</a>
+                <a href="{{ url_for('register') }}">Регистрация</a>
+                {% endif %}
+            </div>
+            <div class="footer-col">
+                <h3>Контакты</h3>
+                <a href="https://discord.gg/fRythrpYxy" target="_blank">Discord</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2025 AcronBIO — Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html> 
